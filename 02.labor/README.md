@@ -1,4 +1,4 @@
-# 2. labor
+<!-- # 2. labor
 
 I. Könyvtárfüggvények használata nélkül, definiáljuk azt a függvényt, amely meghatározza:
 
@@ -47,4 +47,4 @@ II. Alkalmazzuk a map függvényt a I.-nél megírt függvényekre.
   szOsszeg1 x t = szOsszeg1 (x `div` 10) ( t + x `mod` 10 )
 
   > szOsszeg1 123 0
-  ```
+  ``` -->
