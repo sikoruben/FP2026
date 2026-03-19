@@ -1,4 +1,4 @@
-import System.Win32 (LOCALESIGNATURE (lsCsbDefault))
+import System.Win32 (LOCALESIGNATURE (lsCsbDefault), eNABLE_ECHO_INPUT)
 
 -- # 4. labor
 
@@ -103,5 +103,43 @@ listaN2 ls n i
   | otherwise = listaN2 ls n (i + 1)
 
 -- - tükrözi egy lista elemeit,
+
+tukroz [] = []
+tukroz (x : xs) = tukroz xs ++ [x]
+
 -- - két módszerrel is meghatározza egy lista legnagyobb elemeinek pozícióit: a lista elemeit kétszer járja be, illetve úgy hogy a lista elemeit csak egyszer járja be,
+
+maxPoziciokKetGordulessel xs =
+  let m = maxElem xs
+   in keres m xs 0
+  where
+    maxElem [x] = x
+    maxElem (x : xs) = let m = maxElem xs in if x > m then x else m
+    keres _ [] _ = []
+    keres m (x : xs) i
+      | x == m = i : keres m xs (i + 1)
+      | otherwise = keres m xs (i + 1)
+
+maxPoziciokEgyGordulessel (x : xs) = seged xs x 0 [0]
+  where
+    seged [] _ _ pozok = pozok
+    seged (x : xs) maxVal i pozok
+      | x > maxVal = seged xs x (i + 1) [i + 1]
+      | x == maxVal = seged xs maxVal (i + 1) (pozok ++ [i + 1])
+      | otherwise = seged xs maxVal (i + 1) pozok
+
 -- - meghatározza egy lista leggyakrabban előforduló elemét.
+
+leggyakoribb [] = error "ures lista"
+leggyakoribb xs = legjobb (szamolMindent xs)
+  where
+    szamolMindent [] = []
+    szamolMindent (y : ys) = (y, 1 + db y ys) : szamolMindent (szur y ys)
+    db _ [] = 0
+    db v (y : ys) = (if v == y then 1 else 0) + db v ys
+    szur _ [] = []
+    szur v (y : ys) = (if v == y then id else (y :)) (szur v ys)
+    legjobb [(e, _)] = e
+    legjobb ((e1, d1) : (e2, d2) : rest)
+      | d1 >= d2 = legjobb ((e1, d1) : rest)
+      | otherwise = legjobb ((e2, d2) : rest)
