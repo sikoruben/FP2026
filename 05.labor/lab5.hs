@@ -1,5 +1,7 @@
+import Control.Monad.Trans.Cont (reset)
 import Data.List
 import Distribution.Simple.Setup (trueArg)
+import System.Win32 (LOCALESIGNATURE (lsCsbDefault))
 
 -- # 5. labor
 
@@ -150,7 +152,26 @@ mySum2 a b = foldr (+) 0 [a + 1 .. b - 1]
 -- III.
 
 -- - Írjunk egy Haskell-függvényt, amely egy String típusú listából meghatározza azokat a szavakat, amelyek karakterszáma a legkisebb. Például ha a lista a következő szavakat tartalmazza:  function class Float higher-order monad tuple variable Maybe recursion  akkor az eredmény-lista a következőkből áll: class Float monad tuple Maybe
+
+minHosszuSzavak :: [String] -> [String]
+minHosszuSzavak [] = []
+minHosszuSzavak ls = filter (\s -> length s == minLen) ls
+  where
+    minLen = minimum (map length ls)
+
 -- - Írjunk egy talalat Haskell-függvényt, amely meghatározza azt a listát, amely a bemeneti listában megkeresi egy megadott elem előfordulási pozícióit.
+
+talalat :: (Eq a) => a -> [a] -> [Int]
+talalat e ls = [i | (x, i) <- zip ls [0 ..], x == e]
+
+-- foldrmegoldas
+talalatFold :: (Eq a) => a -> [a] -> [Int]
+talalatFold e ls = foldr op (const []) ls 0
+  where
+    op x f i
+      | x == e = i : f (i + 1)
+      | otherwise = f (i + 1)
+
 --   Például a következő függvényhívások esetében az első az 5-ös előfordulási pozícióit, míg a második az e előfordulási pozícióinak listáját határozza meg.
 
 --   ```haskell
@@ -160,6 +181,14 @@ mySum2 a b = foldr (+) 0 [a + 1 .. b - 1]
 --   [3,10,12]
 --   ```
 -- - Írjunk egy osszegT Haskell-függvényt, amely meghatározza egy (String, Int)értékpárokból álló lista esetében az értékpárok második elemeiből képzett összeget.
+
+osszegT :: [(String, Int)] -> Int
+osszegT ls = foldl op 0 ls
+  where
+    op res (nev, ertek) = res + ertek
+
+osszegT' ls = sum (map snd ls)
+
 --   Például:
 
 --   ```haskell
@@ -169,6 +198,11 @@ mySum2 a b = foldr (+) 0 [a + 1 .. b - 1]
 --   ```
 -- - Írjunk egy atlagTu Haskell-függvényt, amely egy kételemű, tuple elemtípusú lista esetében átlagértékeket számol a második elem szerepét betöltő listaelemeken. Az eredmény egy tuple elemtípusú lista legyen, amelynek kiíratása során a tuple-elemeket formázzuk, és külön sorba írjuk őket.
 --   Például:
+
+atlagTu :: [(String, [Double])] -> [String]
+atlagTu ls = map format ls
+  where
+    format (nev, pontok) = nev ++ " " ++ show (sum pontok / fromIntegral (length pontok))
 
 --   ```haskell
 --   > :set +m
